@@ -2,33 +2,55 @@ const User = require("../models/userModel")
 const jwt = require("jsonwebtoken")
 const asyncHandler = require("express-async-handler")
 
-const authMiddleware = asyncHandler(async (req,res,next) => {
+const authMiddleware = asyncHandler(async (req, res, next) => {
     let token;
-    if(req?.headers?.authorization?.startsWith('Bearer')){
-        token = req.headers.authorization.split(" ")[1];
-        try{
-            if(token){
+
+    if (req?.headers?.authorization?.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+        try {
+            if (token) {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
-                const user = await User.findById(decoded?.id);
+
+                if (!decoded?.id) {
+                    res.status(401);
+                    throw new Error('Invalid token. Please log in again.');
+                }
+
+                const user = await User.findById(decoded.id);
+                if (!user) {
+                    res.status(401);
+                    throw new Error('User not found. Please log in again.');
+                }
+
                 req.user = user;
                 next();
             }
-        }catch (error){
-            throw new Error("Not Authorized token expired, please login agian",error)
+        } catch (error) {
+            console.error('Token verification error:', error);
+            res.status(401).json({ message: 'Not authorized. Token expired or invalid.' });
         }
-    }else {
-        throw new Error("there is no token attached to header")
+    } else {
+        res.status(401).json({ message: 'No token attached to the header.' });
     }
-})
-const isAdmin = asyncHandler(async (req,res,next) => {
-    console.log(req.user)
-    const {email} = req.user
-    const adminUser = await User.findOne({email})
-    if(adminUser.role !== "admin"){
-        throw new Error("You are not an Admin")
-    }else {
+});
+
+const isAdmin = asyncHandler(async (req, res, next) => {
+    if (!req.user) {
+        res.status(403);
+        throw new Error('User information not available in request.');
+    }
+    const { email } = req.user;
+    try {
+        const adminUser = await User.findOne({ email });
+        if (!adminUser || adminUser.role !== 'admin') {
+            res.status(403);
+            throw new Error('You are not authorized as an admin.');
+        }
         next();
+    } catch (error) {
+        console.error('Admin check error:', error);
+        res.status(403).json({ message: 'Admin authorization failed.' });
     }
-})
+});
 
 module.exports = {authMiddleware, isAdmin};

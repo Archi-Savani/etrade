@@ -8,13 +8,13 @@ const authRouter = require("./routes/authRoute")
 const productRouter = require("./routes/productRoute")
 const bodyParser = require("body-parser")
 const cokkieParser = require("cookie-parser")
-
+const morgan = require("morgan")
 dbConnect()
 
-// app.use('/',(req,res) => {
-//     res.send("hello from the server")
-// })
-
+app.get('/',(req,res) => {
+    res.send("hello from the server")
+})
+app.use(morgan("dev"))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(cokkieParser())
