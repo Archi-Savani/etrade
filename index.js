@@ -9,11 +9,18 @@ const productRouter = require("./routes/productRoute")
 const bodyParser = require("body-parser")
 const cokkieParser = require("cookie-parser")
 const morgan = require("morgan")
+
 dbConnect()
 
-app.get('/',(req,res) => {
-    res.send("hello from the server")
-})
+// app.use('/',(req,res) => {
+//     res.send("hello from the server")
+// })
+
+app.use(cors({
+    origin: 'http://localhost:3000', // Correct frontend URL
+    credentials: true, // Allow credentials (cookies, auth tokens, etc.)
+}));
+
 app.use(morgan("dev"))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
@@ -24,6 +31,7 @@ app.use("/api/product", productRouter)
 
 app.use(notFound)
 app.use(errorHandler)
+
 
 app.listen(PORT, () => {
     console.log(`server is running at ${PORT}`)

@@ -1,24 +1,32 @@
 const mongoose = require("mongoose")
 const bcrypt = require("bcrypt")
-const crypto = require("crypto")
+
 const userSchema = new mongoose.Schema({
     name: {
-        type: String, required: true, unique: true,
+        type: String,
+        required: true,
+        unique: true,
     },
     email: {
-        type: String, required: true, unique: true,
+        type: String,
+        required: true,
+        unique: true,
     },
     password: {
-        type: String, required: true,
+        type: String,
+        required: true,
     },
     role: {
-        type: String, default: "user"
+        type: String,
+        default: "user"
     },
     isBlocked: {
-        type: Boolean, default: false,
+        type: Boolean,
+        default: false,
     },
     cart: {
-        type: Array, default: [],
+        type: Array,
+        default: [],
     },
     address: [{type: mongoose.Schema.Types.ObjectId, ref: "Address"}],
     wishlist: [{type: mongoose.Schema.Types.ObjectId, ref: "Product"}],

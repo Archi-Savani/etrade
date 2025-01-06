@@ -1,16 +1,9 @@
-const Product = require("../models/ProductModel")
+const product = require("../models/ProductModel")
 const asyncHandler = require("express-async-handler")
-const slugify = require("slugify")
-const {json} = require("express");
-
-console.log(Product)
 
 const createProduct = asyncHandler(async (req,res) => {
     try{
-        if (req.body.title){
-            req.body.slug = slugify(req.body.title)
-        }
-        const newProduct = await Product.create(req.body)
+        const newProduct = await Product.crate(req.body)
         res.json(newProduct)
     }catch (error){
         throw new Error(error)
@@ -125,4 +118,4 @@ const getAllProduct = asyncHandler (async  (req , res) => {
     }
 })
 
-module.exports = {createProduct , getaProduct , getAllProduct , updateProduct , deleteProduct}
+module.exports = {createProduct, getaProduct, getAllProducts, updateProduct, deleteProduct}
