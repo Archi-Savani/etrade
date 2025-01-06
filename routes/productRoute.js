@@ -1,5 +1,6 @@
 const express = require("express")
-const {createProduct} = require("../controllers/productCtrl")
+const {createProduct, getaProduct,getAllProduct,updateProduct,deleteProduct} = require("../controllers/productCtrl");
+const {isAdmin, authMiddleware} = require("../middleware/authMiddleware")
 const router = express.Router()
 
 

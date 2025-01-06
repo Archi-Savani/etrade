@@ -118,4 +118,4 @@ const getAllProduct = asyncHandler (async  (req , res) => {
     }
 })
 
-module.exports = {createProduct, getaProduct, getAllProducts, updateProduct, deleteProduct}
+module.exports = {createProduct, getaProduct, getAllProduct, updateProduct, deleteProduct}

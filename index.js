@@ -1,6 +1,7 @@
 const express = require("express")
 const dbConnect = require("./config/dbConnect")
 const {notFound, errorHandler} = require("./middleware/errorHandler")
+const cors = require("cors");
 const app = express()
 const dotenv = require('dotenv').config()
 const PORT = process.env.PORT || 8000;
@@ -16,10 +17,7 @@ dbConnect()
 //     res.send("hello from the server")
 // })
 
-app.use(cors({
-    origin: 'http://localhost:3000', // Correct frontend URL
-    credentials: true, // Allow credentials (cookies, auth tokens, etc.)
-}));
+app.use(cors());
 
 app.use(morgan("dev"))
 app.use(bodyParser.json())
