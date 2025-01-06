@@ -87,7 +87,6 @@ const logout = asyncHandler(async (req,res) => {
 // update user
 
 const updateUser = asyncHandler(async (req,res) => {
-    console.log(req.user)
     const {_id} = req.user;
     validateMongoDbId(_id)
     try{
