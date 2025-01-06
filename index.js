@@ -18,8 +18,8 @@ dbConnect()
 // })
 
 app.use(cors({
-    origin: 'http://localhost:3000', // Correct frontend URL
-    credentials: true, // Allow credentials (cookies, auth tokens, etc.)
+    origin: 'http://localhost:3000',
+    credentials: true,
 }));
 
 app.use(morgan("dev"))
