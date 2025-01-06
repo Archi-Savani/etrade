@@ -4,6 +4,8 @@ const generateToken = require("../config/jwtToken")
 const {generateRefreshToken} = require("../config/refreshtoken")
 const validateMongoDbId = require("../utils/validateMongodbId")
 const jwt = require("jsonwebtoken")
+// const sendEmail = require("./emailCtrl")
+// const crypto = require("crypto")
 
 const createUser = asyncHandler(async (req,res) => {
     const email = req.body.email;
@@ -177,4 +179,45 @@ const deleteUser = asyncHandler(async (req,res) => {
     }
 })
 
-module.exports = {createUser, loginUserCtrl, getallUser , getSingleUser , deleteUser, updateUser, blockUser, unblockUser, handleRefreshToken, logout}
+const updatePassword = asyncHandler(async (req, res) => {
+    const { _id } = req.user; // Extract user ID from the authenticated user
+    const { password } = req.body; // Get the new password from the request body
+
+    validateMongoDbId(_id); // Validate that the ID is a valid MongoDB ID
+
+    // Find the user by ID
+    const user = await User.findById(_id);
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    if (password) {
+        // Update the password
+        user.password = password;
+
+        // Create a new password reset token and expiration
+        const resetToken = user.createPasswordResetToken();
+
+        // Log the reset token for debugging purposes
+        console.log("Reset Token Created:", resetToken);
+
+        // Save the user to persist the changes (password, reset token, expiration)
+        await user.save();
+
+        res.json({
+            message: "Password updated successfully",
+            resetToken, // Send the reset token in the response
+            updatedUser: user, // Send the updated user document
+        });
+    } else {
+        res.status(400).json({ message: "Password is required" });
+    }
+});
+
+
+
+
+
+
+
+module.exports = {createUser, loginUserCtrl, getallUser , getSingleUser , deleteUser, updateUser, handleRefreshToken, logout, unblockUser,blockUser , updatePassword}

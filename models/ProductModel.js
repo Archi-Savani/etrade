@@ -22,11 +22,12 @@ const productSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        require: true,
+        // required: true,
+        ref: "Category"
     },
     brand: {
         type: String,
-        require: true
+        enum: ["Apple", "Samsung", "Lenovo"],
     },
     quantity: {
         type: Number,
@@ -41,7 +42,7 @@ const productSchema = new mongoose.Schema({
     },
     color: {
         type: String,
-        require: true
+        required: true,
     },
     ratings: [{
         star: Number,
