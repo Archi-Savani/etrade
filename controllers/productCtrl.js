@@ -1,122 +1,141 @@
-const Product = require("../models/ProductModel")
-const asyncHandler = require("express-async-handler")
+const Product = require("../models/ProductModel");
+const asyncHandler = require("express-async-handler");
+const slugify = require("slugify");
 
-const createProduct = asyncHandler(async (req,res) => {
-    try{
-        const user = req.user
-        // const newProduct = await Product.crate(req.body)
-        const newProduct = await Product.create({...req.body,user_id: user._id})
-        res.json(newProduct)
-    }catch (error){
-        throw new Error(error)
+// Create a new product
+const createProduct = asyncHandler(async (req, res) => {
+    try {
+        const user = req.user;
+        const { title } = req.body;
+
+        // Ensure slug is generated
+        const slug = slugify(title, { lower: true });
+
+        const newProduct = await Product.create({
+            ...req.body,
+            slug,
+            user_id: user._id
+        });
+
+        res.status(201).json(newProduct);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-})
+});
 
-
+// Update a product
 const updateProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    console.log(req.params)
-    console.log(id , "idd")
+
     try {
         if (req.body.title) {
-            req.body.slug = slugify(req.body.title);
+            req.body.slug = slugify(req.body.title, { lower: true });
         }
-        const updatedProduct = await Product.findOneAndUpdate(
-            { _id: id }, // Correct query
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
             req.body,
-            { new: true } // Ensures the returned document is the updated one
+            { new: true, runValidators: true }
         );
+
         if (!updatedProduct) {
             return res.status(404).json({ message: "Product not found" });
         }
+
         res.json(updatedProduct);
     } catch (error) {
-        console.error(error); // Log the error for debugging
         res.status(500).json({ message: error.message });
     }
 });
 
+// Delete a product
 const deleteProduct = asyncHandler(async (req, res) => {
-    console.log("chjkl")
     const { id } = req.params;
-    console.log(req.params)
-    console.log(id , "idd")
+
     try {
-        const deleteProduct = await Product.findOneAndDelete({ _id: id })
-        if (!deleteProduct) {
+        const deletedProduct = await Product.findByIdAndDelete(id);
+
+        if (!deletedProduct) {
             return res.status(404).json({ message: "Product not found" });
         }
-        res.json(deleteProduct);
+
+        res.json({ message: "Product deleted successfully", deletedProduct });
     } catch (error) {
-        console.error(error); // Log the error for debugging
         res.status(500).json({ message: error.message });
     }
 });
 
+// Get a single product
+const getaProduct = asyncHandler(async (req, res) => {
+    const { id } = req.params;
 
-const getaProduct = asyncHandler (async  (req , res) => {
-    const {id} = req.params
-    console.log(id)
-    try{
-        const findProduct = await Product.findById(id)
-        res.json(findProduct)
-    }catch (error) {
-        throw new Error(error)
+    try {
+        const product = await Product.findById(id).populate("category").populate("ratings.postedby");
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.json(product);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-})
+});
 
-const getAllProduct = asyncHandler (async  (req , res) => {
-    console.log(req.params)
-    try{
-        // filtering
-        const queryObj = { ...req.query }
-        const excludeFields = ['page' , 'sort' , 'limit' , 'fields']
-        excludeFields.forEach((el) => delete queryObj[el])
-        console.log(queryObj , "queryobj")
+// Get all products
+const getAllProduct = asyncHandler(async (req, res) => {
+    try {
+        // Filtering
+        const queryObj = { ...req.query };
+        const excludeFields = ["page", "sort", "limit", "fields"];
+        excludeFields.forEach((field) => delete queryObj[field]);
 
-        let queryStr = JSON.stringify(queryObj)
-        queryStr = queryStr.replace(/\b(gte|gt|lt|lte)\b/g , match => `$${match}`);
-        console.log(JSON.parse(queryStr) , "all");
+        // Advanced filtering
+        let queryStr = JSON.stringify(queryObj);
+        queryStr = queryStr.replace(/\b(gte|gt|lt|lte|in)\b/g, (match) => `$${match}`);
 
         let query = Product.find(JSON.parse(queryStr));
 
-
-        // sorting
-        if (req.query.sort){
-            const sortBy = req.query.sort.split(',').join(" ")
-            query = query.sort('sortBy')
-        }else{
-            query = query.sort('-createdAt')
+        // Sorting
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(",").join(" ");
+            query = query.sort(sortBy);
+        } else {
+            query = query.sort("-createdAt");
         }
 
-        // limiting the fildesx
-        if (req.query.fields){
-            const fields = req.query.fields.split(',').join(" ")
-            query = query.select(fields)
-        }else {
-            query = query.select('-__v')
+        // Field limiting
+        if (req.query.fields) {
+            const fields = req.query.fields.split(",").join(" ");
+            query = query.select(fields);
+        } else {
+            query = query.select("-__v");
         }
 
-        // pagination
-
-        const page = req.query.page;
-        const limit = req.query.limit;
+        // Pagination
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 10;
         const skip = (page - 1) * limit;
+
         query = query.skip(skip).limit(limit);
-        if (req.query.page){
+
+        if (req.query.page) {
             const productCount = await Product.countDocuments();
-            if(skip>= productCount) throw new error('this page is not exists')
+            if (skip >= productCount) throw new Error("This page does not exist");
         }
-        console.log(page , limit , skip , 'fghjkl;');
 
-        const product = await query;
+        const products = await query;
 
-        console.log(queryObj , req.query , "gvhbjkl")
-
-        res.json(product)
-    }catch (error) {
-        throw new Error(error)
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-})
+});
 
-module.exports = {createProduct, getaProduct, getAllProduct, updateProduct, deleteProduct}
+module.exports = {
+    createProduct,
+    getaProduct,
+    getAllProduct,
+    updateProduct,
+    deleteProduct,
+};
