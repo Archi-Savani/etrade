@@ -3,7 +3,6 @@ const {createProduct, getaProduct,getAllProduct,updateProduct,deleteProduct} = r
 const {isAdmin, authMiddleware} = require("../middleware/authMiddleware")
 const router = express.Router()
 
-
 router.post('/', authMiddleware , isAdmin ,  createProduct)
 router.get("/:id", isAdmin , getaProduct)
 router.put("/:id",  authMiddleware , isAdmin ,  updateProduct)

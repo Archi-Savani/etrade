@@ -9,6 +9,7 @@ const authRouter = require("./routes/authRoute")
 const productRouter = require("./routes/productRoute")
 const cartRouter = require("./routes/cartRoute")
 const wishlistRouter = require("./routes/wishlistRoute")
+const orderRouter = require("./routes/orderRoute")
 const bodyParser = require("body-parser")
 const cokkieParser = require("cookie-parser")
 const morgan = require("morgan")
@@ -32,6 +33,7 @@ app.use(cokkieParser())
 
 app.use("/api/user", authRouter)
 app.use("/api/product", productRouter)
+app.use("/api/order", authMiddleware, orderRouter);
 app.use("/api/cart", authMiddleware, cartRouter);
 app.use("/api/wishlist", authMiddleware, wishlistRouter);
 
