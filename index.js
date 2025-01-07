@@ -7,9 +7,12 @@ const dotenv = require('dotenv').config()
 const PORT = process.env.PORT || 8000;
 const authRouter = require("./routes/authRoute")
 const productRouter = require("./routes/productRoute")
+const cartRouter = require("./routes/cartRoute")
+const wishlistRouter = require("./routes/wishlistRoute")
 const bodyParser = require("body-parser")
 const cokkieParser = require("cookie-parser")
 const morgan = require("morgan")
+const {authMiddleware} = require("./middleware/authMiddleware");
 
 dbConnect()
 
@@ -29,6 +32,8 @@ app.use(cokkieParser())
 
 app.use("/api/user", authRouter)
 app.use("/api/product", productRouter)
+app.use("/api/cart", authMiddleware, cartRouter);
+app.use("/api/wishlist", authMiddleware, wishlistRouter);
 
 app.use(notFound)
 app.use(errorHandler)
