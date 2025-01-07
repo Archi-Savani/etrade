@@ -3,7 +3,9 @@ const asyncHandler = require("express-async-handler")
 
 const createProduct = asyncHandler(async (req,res) => {
     try{
-        const newProduct = await Product.create(req.body)
+        const user = req.user
+        // const newProduct = await Product.crate(req.body)
+        const newProduct = await Product.create({...req.body,user_id: user._id})
         res.json(newProduct)
     }catch (error){
         throw new Error(error)
@@ -12,7 +14,6 @@ const createProduct = asyncHandler(async (req,res) => {
 
 
 const updateProduct = asyncHandler(async (req, res) => {
-    console.log("chjkl")
     const { id } = req.params;
     console.log(req.params)
     console.log(id , "idd")
