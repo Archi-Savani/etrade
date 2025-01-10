@@ -2,10 +2,23 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+    product_images: [
+        {
+            type: String,
+            required: true
+        },
+    ],
     title: {
         type: String,
         required: true,
         // trim: true
+    },
+    category: {
+        type: String,
+        ref: "Category"
+    },
+    subCategory: {
+        type: String
     },
     slug: {
         type: String,
@@ -25,13 +38,6 @@ const productSchema = new mongoose.Schema({
         salePrice: {
             type: Number
         },
-    },
-    category: {
-        type: String,
-        ref: "Category"
-    },
-    subCategory: {
-        type: String
     },
     productType: {
         type: String
@@ -56,17 +62,10 @@ const productSchema = new mongoose.Schema({
             colorName: {
                 type: String
             },
-            images: [
+            color_images:
                 {
-                    type: String
+                    type: Array
                 }
-            ],
-            stock: {
-                type: Number
-            },
-            isActive: {
-                type: Boolean
-            }
         }
     ],
     sizes: [
@@ -79,9 +78,6 @@ const productSchema = new mongoose.Schema({
             }
         }
     ],
-    thumbnail: {
-        type: String
-    },
     gallery: [
         {
             type: String
@@ -95,81 +91,9 @@ const productSchema = new mongoose.Schema({
             type: Number
         }
     },
-    offers: [
-        {
-            type: {
-                type: String
-            },
-            details: {
-                type: String
-            }
-        }
-    ],
-    availability: {
-        isInStock: {
-            type: Boolean
-        },
-        deliveryOptions: {
-            standardDelivery: {
-                type: String
-            },
-            fastestDelivery: {
-                type: String
-            }
-        }
-    },
-    reviews: [
-        {
-            user: {
-                type: String
-            },
-            rating: {
-                type: Number
-            },
-            comment: {
-                type: String
-            },
-            date: {
-                type: String
-            }
-        }
-    ],
     gender: {
         type: String
     },
-    ASIN: {
-        type: String
-    },
-    dimensions: {
-        height: {
-            type: Number
-        },
-        width: {
-            type: Number
-        },
-        depth: {
-            type: Number
-        },
-        weight: {
-            type: Number
-        }
-    },
-    shippingDetails: {
-        shippingWeight: {
-            type: Number
-        },
-        dimensions: {
-            height: {
-                type: Number
-            },
-            width: {
-                type: Number
-            },
-            depth: {
-                type: Number
-            }
-        },
-    }
-}, { timestamps: true });
+}, {timestamps: true});
 
 module.exports = mongoose.model('Product', productSchema);
