@@ -5,24 +5,21 @@ const productSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        // trim: true
     },
     slug: {
         type: String,
         required: true,
-        // unique: true,
-        // lowercase: true
     },
     description: {
         type: String,
         required: true
     },
     price: {
-        actualPrice: {
+        orignal_price: {
             type: Number,
             required: true
         },
-        salePrice: {
+        discounted_price: {
             type: Number
         },
     },
@@ -30,10 +27,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         ref: "Category"
     },
-    subCategory: {
+    sub_category: {
         type: String
     },
-    productType: {
+    producttype: {
         type: String
     },
     brand: {
@@ -51,25 +48,25 @@ const productSchema = new mongoose.Schema({
     images: {
         type: Array
     },
-    colors: [
+    color_options: [
         {
-            colorName: {
+            color: {
                 type: String
             },
-            images: [
+            color_images: [
                 {
                     type: String
                 }
             ],
-            stock: {
-                type: Number
-            },
-            isActive: {
-                type: Boolean
-            }
+            // stock: {
+            //     type: Number
+            // },
+            // isActive: {
+            //     type: Boolean
+            // }
         }
     ],
-    sizes: [
+    size_options: [
         {
             size: {
                 type: String
@@ -87,14 +84,16 @@ const productSchema = new mongoose.Schema({
             type: String
         }
     ],
-    rating: {
-        average: {
-            type: Number
-        },
-        count: {
-            type: Number
+    rating: [
+        {
+            average: {
+                type: Number
+            },
+            count: {
+                type: Number
+            }
         }
-    },
+    ],
     offers: [
         {
             type: {
@@ -135,6 +134,9 @@ const productSchema = new mongoose.Schema({
         }
     ],
     gender: {
+        type: String
+    },
+    instruction: {
         type: String
     },
     ASIN: {
