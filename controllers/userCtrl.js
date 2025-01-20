@@ -108,6 +108,7 @@ const updateUser = asyncHandler(async (req,res) => {
 
 const getallUser = asyncHandler(async(req,res) => {
     try{
+        console.log('chekc')
         const getUsers = await User.find();
         res.json(getUsers)
     }catch (error){
