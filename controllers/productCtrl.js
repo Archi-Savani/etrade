@@ -5,11 +5,10 @@ const {uploadFiles} = require("../helpers/productImage");
 
 // Create a new product
 const createProduct = asyncHandler(async (req, res) => {
-
-
     try {
         const user = req.user;
-        const {  title,
+        const {
+            title,
             category,
             sub_category,
             slug,
@@ -24,16 +23,22 @@ const createProduct = asyncHandler(async (req, res) => {
             rate,
             gender,
             stock,
-            instruction} = req.body;
+            instruction
+        } = req.body;
 
         const files = req.files;
 
-        const fileBuffers = files.map(file => file.buffer);
+        // Separate product_images and color_images
+        const productImageFiles = files.product_images || [];
+        const colorImageFiles = files.color_images || [];
 
-        const imageUrls = await uploadFiles(fileBuffers);
+        // Extract file buffers for uploads
+        const productImageBuffers = productImageFiles.map(file => file.buffer);
+        const colorImageBuffers = colorImageFiles.map(file => file.buffer);
 
-        // Ensure slug is generated
-        // const slug = slugify(title, { lower: true });
+        // Upload images
+        const productImageUrls = await uploadFiles(productImageBuffers);
+        const colorImageUrls = await uploadFiles(colorImageBuffers);
 
         const newProduct = await Product.create({
             user_id: user._id,
@@ -51,9 +56,10 @@ const createProduct = asyncHandler(async (req, res) => {
             size_options: JSON.parse(size_options),
             rate: JSON.parse(rate),
             gender,
-            stock:JSON.parse(stock),
+            stock: JSON.parse(stock),
             instruction,
-            product_images: imageUrls,
+            product_images: productImageUrls,
+            color_images: colorImageUrls, // Include color_images in the database
         });
 
         res.status(201).json(newProduct);
@@ -61,6 +67,7 @@ const createProduct = asyncHandler(async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 
 // Update a product
 const updateProduct = asyncHandler(async (req, res) => {
