@@ -28,18 +28,22 @@ const createProduct = asyncHandler(async (req, res) => {
 
         const files = req.files;
 
-        // Separate product_images and color_images
+        // Separate product_images, color_images, and gallery_images
         const productImageFiles = files.product_images || [];
         const colorImageFiles = files.color_images || [];
+        const galleryImageFiles = files.gallery_images || [];
 
         // Extract file buffers for uploads
         const productImageBuffers = productImageFiles.map(file => file.buffer);
         const colorImageBuffers = colorImageFiles.map(file => file.buffer);
+        const galleryImageBuffers = galleryImageFiles.map(file => file.buffer);
 
         // Upload images
         const productImageUrls = await uploadFiles(productImageBuffers);
         const colorImageUrls = await uploadFiles(colorImageBuffers);
+        const galleryImageUrls = await uploadFiles(galleryImageBuffers);
 
+        // Create new product with the additional gallery_images field
         const newProduct = await Product.create({
             user_id: user._id,
             title,
@@ -59,7 +63,8 @@ const createProduct = asyncHandler(async (req, res) => {
             stock: JSON.parse(stock),
             instruction,
             product_images: productImageUrls,
-            color_images: colorImageUrls, // Include color_images in the database
+            color_images: colorImageUrls,
+            gallery_images: galleryImageUrls, // Include gallery_images in the database
         });
 
         res.status(201).json(newProduct);
@@ -67,6 +72,7 @@ const createProduct = asyncHandler(async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 
 
 // Update a product
