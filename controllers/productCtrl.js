@@ -1,20 +1,59 @@
 const Product = require("../models/ProductModel");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
+const {uploadFiles} = require("../helpers/productImage");
 
 // Create a new product
 const createProduct = asyncHandler(async (req, res) => {
+
+
     try {
         const user = req.user;
-        const { title } = req.body;
+        const {  title,
+            category,
+            sub_category,
+            slug,
+            description,
+            price,
+            producttype,
+            brand,
+            quantity,
+            sold,
+            color_options,
+            size_options,
+            rate,
+            gender,
+            stock,
+            instruction} = req.body;
+
+        const files = req.files;
+
+        const fileBuffers = files.map(file => file.buffer);
+
+        const imageUrls = await uploadFiles(fileBuffers);
 
         // Ensure slug is generated
-        const slug = slugify(title, { lower: true });
+        // const slug = slugify(title, { lower: true });
 
         const newProduct = await Product.create({
-            ...req.body,
+            user_id: user._id,
+            title,
+            category,
+            sub_category,
             slug,
-            user_id: user._id
+            description,
+            price: JSON.parse(price),
+            producttype,
+            brand,
+            quantity: JSON.parse(quantity),
+            sold: JSON.parse(sold),
+            color_options: JSON.parse(color_options),
+            size_options: JSON.parse(size_options),
+            rate: JSON.parse(rate),
+            gender,
+            stock:JSON.parse(stock),
+            instruction,
+            product_images: imageUrls,
         });
 
         res.status(201).json(newProduct);
