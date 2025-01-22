@@ -25,9 +25,8 @@ const createProduct = asyncHandler(async (req, res) => {
             stock,
             instruction,
         } = req.body;
-
         const files = req.files;
-
+        // console.log(files)
         // Separate product_images, color_images, and gallery_images
         const productImageFiles = files.product_images || [];
         const colorImageFiles = files.color_images || [];
@@ -44,18 +43,29 @@ const createProduct = asyncHandler(async (req, res) => {
         const galleryImageUrls = await uploadFiles(galleryImageBuffers);
 
         const parsedColorOptions = typeof color_options === 'string' ? JSON.parse(color_options) : color_options;
-        const updatedColorOptions = await Promise.all(parsedColorOptions.map(async (colorOption, index) => {
-            const colorImages = files
-                .filter(file => file.fieldname === `color_images[${index}]`)
-                .map(file => file.buffer);
 
-            const uploadedImages = await uploadFiles(colorImages);
+        if (!Array.isArray(parsedColorOptions)) {
+            return res.status(400).json({ status: 400, message: "Invalid color_options format" });
+        }
+        const updatedColorOptions = await Promise.all(
+            parsedColorOptions.map(async (colorOption, index) => {
+                const colorImages = files
+                    .filter((file) => file.fieldname === `color_images[${index}]`)
+                    .map((file) => file.buffer);
+                // console.log(colorImages)
 
-            return {
-                ...colorOption,
-                color_images: uploadedImages,
-            };
-        }));
+                const uploadedImages = await uploadFiles(colorImages);
+                console.log(uploadedImages)
+
+                return {
+                    ...colorOption,
+                    color_images: uploadedImages,
+                };
+        // console.log("check")
+            })
+        );
+        console.log(updatedColorOptions);
+
 
         // Create new product with the additional gallery_images field
         const newProduct = await Product.create({
@@ -77,7 +87,7 @@ const createProduct = asyncHandler(async (req, res) => {
             stock: JSON.parse(stock),
             instruction,
             product_images: productImageUrls,
-            color_images: colorImageUrls,
+            // color_images: colorImageUrls,
             gallery: galleryImageUrls, // Include gallery_images in the database
         });
 

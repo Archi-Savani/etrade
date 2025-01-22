@@ -17,7 +17,6 @@ const productSchema = new mongoose.Schema({
     price: {
         orignal_price: {
             type: Number,
-            required: true
         },
         discounted_price: {
             type: Number
@@ -57,13 +56,7 @@ const productSchema = new mongoose.Schema({
                 {
                     type: String
                 }
-            ],
-            // stock: {
-            //     type: Number
-            // },
-            // isActive: {
-            //     type: Boolean
-            // }
+            ]
         }
     ],
     size_options: [
