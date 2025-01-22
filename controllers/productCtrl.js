@@ -70,7 +70,7 @@ const createProduct = asyncHandler(async (req, res) => {
             brand,
             quantity: JSON.parse(quantity),
             sold: JSON.parse(sold),
-            color_options: JSON.parse(color_options),
+            color_options: updatedColorOptions,
             size_options: JSON.parse(size_options),
             rate: JSON.parse(rate),
             gender,
