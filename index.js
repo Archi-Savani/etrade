@@ -21,10 +21,7 @@ dbConnect()
 //     res.send("hello from the server")
 // })
 
-app.use(cors({
-    origin: 'http://localhost:3000', // Correct frontend URL
-    credentials: true, // Allow credentials (cookies, auth tokens, etc.)
-}));
+app.use(cors());
 
 app.use(morgan("dev"))
 app.use(bodyParser.json())
