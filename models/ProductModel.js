@@ -44,9 +44,6 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    images: {
-        type: Array
-    },
     color_options: [
         {
             color: {
@@ -69,9 +66,6 @@ const productSchema = new mongoose.Schema({
             }
         }
     ],
-    thumbnail: {
-        type: String
-    },
     gallery: [
         {
             type: String
@@ -87,84 +81,84 @@ const productSchema = new mongoose.Schema({
             }
         }
     ],
-    offers: [
-        {
-            type: {
-                type: String
-            },
-            details: {
-                type: String
-            }
-        }
-    ],
-    availability: {
-        isInStock: {
-            type: Boolean
-        },
-        deliveryOptions: {
-            standardDelivery: {
-                type: String
-            },
-            fastestDelivery: {
-                type: String
-            }
-        }
-    },
-    reviews: [
-        {
-            user: {
-                type: String
-            },
-            rating: {
-                type: Number
-            },
-            comment: {
-                type: String
-            },
-            date: {
-                type: String
-            }
-        }
-    ],
+    // offers: [
+    //     {
+    //         type: {
+    //             type: String
+    //         },
+    //         details: {
+    //             type: String
+    //         }
+    //     }
+    // ],
+    // availability: {
+    //     isInStock: {
+    //         type: Boolean
+    //     },
+    //     deliveryOptions: {
+    //         standardDelivery: {
+    //             type: String
+    //         },
+    //         fastestDelivery: {
+    //             type: String
+    //         }
+    //     }
+    // },
+    // reviews: [
+    //     {
+    //         user: {
+    //             type: String
+    //         },
+    //         rating: {
+    //             type: Number
+    //         },
+    //         comment: {
+    //             type: String
+    //         },
+    //         date: {
+    //             type: String
+    //         }
+    //     }
+    // ],
     gender: {
         type: String
     },
     instruction: {
         type: String
     },
-    ASIN: {
-        type: String
-    },
-    dimensions: {
-        height: {
-            type: Number
-        },
-        width: {
-            type: Number
-        },
-        depth: {
-            type: Number
-        },
-        weight: {
-            type: Number
-        }
-    },
-    shippingDetails: {
-        shippingWeight: {
-            type: Number
-        },
-        dimensions: {
-            height: {
-                type: Number
-            },
-            width: {
-                type: Number
-            },
-            depth: {
-                type: Number
-            }
-        },
-    }
+    // ASIN: {
+    //     type: String
+    // },
+    // dimensions: {
+    //     height: {
+    //         type: Number
+    //     },
+    //     width: {
+    //         type: Number
+    //     },
+    //     depth: {
+    //         type: Number
+    //     },
+    //     weight: {
+    //         type: Number
+    //     }
+    // },
+    // shippingDetails: {
+    //     shippingWeight: {
+    //         type: Number
+    //     },
+    //     dimensions: {
+    //         height: {
+    //             type: Number
+    //         },
+    //         width: {
+    //             type: Number
+    //         },
+    //         depth: {
+    //             type: Number
+    //         }
+    //     },
+    // }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);
