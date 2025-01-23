@@ -64,27 +64,8 @@ const handleRefreshToken = asyncHandler(async (req,res) => {
 
 // logout functionality
 
-const logout = asyncHandler(async (req,res) => {
-    const cookie = req.cookies;
-    if (!cookie.refreshToken) throw new Error('NO REfresh Token in cookies')
-    const refreshToken = cookie.refreshToken;
-    const user = await User.findOne({ refreshToken})
-    if(!user){
-        res.clearCookie("refreshToken", {
-            httpOnly: true,
-            secure: true
-        })
-        return res.sendStatus(204)
-    }
-    await User.findOneAndUpdate({refreshToken}, {
-        refreshToken: ""
-    })
-    res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: true
-    })
-    res.sendStatus(204);
-})
+
+
 
 // update user
 
@@ -187,7 +168,7 @@ const updatePassword = asyncHandler(async (req, res) => {
     validateMongoDbId(_id); // Validate that the ID is a valid MongoDB ID
 
     // Find the user by ID
-    const user = await User.findById(_id);
+    const user = await User.findById(_id)
     if (!user) {
         return res.status(404).json({ message: "User not found" });
     }
@@ -221,4 +202,5 @@ const updatePassword = asyncHandler(async (req, res) => {
 
 
 
-module.exports = {createUser, loginUserCtrl, getallUser , getSingleUser , deleteUser, updateUser, handleRefreshToken, logout, unblockUser,blockUser , updatePassword}
+module.exports = {createUser, loginUserCtrl , getallUser , getSingleUser , deleteUser, updateUser, handleRefreshToken,
+    unblockUser,blockUser , updatePassword}
