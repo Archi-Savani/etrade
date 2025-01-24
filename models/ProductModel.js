@@ -24,7 +24,7 @@ const mongoose = require('mongoose');
         },
         category: {
             type: String,
-            // ref: "Category"
+            ref: "Category"
         },
         sub_category: {
             type: String
